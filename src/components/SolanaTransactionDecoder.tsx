@@ -90,6 +90,7 @@ export default function SolanaTransactionDecoder() {
   const [decodedTransaction, setDecodedTransaction] =
     useState<DisplayTransaction | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // 不再检测暗色模式，全部用Tailwind dark:前缀控制
 
   const handleDecode = () => {
     try {
@@ -118,14 +119,14 @@ export default function SolanaTransactionDecoder() {
 
   return (
     <div className="w-full mx-auto space-y-4">
-      <h1 className="text-2xl font-bold mb-4 text-[#b5e853] dark:[text-shadow:0_0_2px_#b5e853,0_0_10px_#b5e853]">
+      <h1 className="text-2xl font-bold mb-4 text-[#7cae2f] dark:text-[#b5e853] dark:[text-shadow:0_0_2px_#b5e853,0_0_10px_#b5e853]">
         Solana Transaction Decoder
       </h1>
       <div className="space-y-4">
-        <label className="block text-sm font-medium text-gray-200">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
           Signed Raw Transaction (Base58 or Base64)
           <TextareaAutosize
-            className="w-full mt-4 p-2 border border-gray-300 dark:bg-gray-800 rounded"
+            className="w-full mt-4 p-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded transition-colors"
             placeholder="Enter Base58 or Base64 encoded transaction"
             value={rawTransaction}
             onChange={(e) => setRawTransaction(e.target.value)}
@@ -133,7 +134,7 @@ export default function SolanaTransactionDecoder() {
           />
         </label>
         <button
-          className="mt-4 bg-blue-700 text-white px-4 py-2 rounded"
+          className="mt-4 bg-blue-700 dark:bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 dark:hover:bg-blue-950"
           onClick={handleDecode}
         >
           Decode Transaction
@@ -142,11 +143,35 @@ export default function SolanaTransactionDecoder() {
       {error && <div className="text-red-500 mt-2">{error}</div>}
       {decodedTransaction && (
         <div className="mt-6 max-w-full">
-          <h2 className="text-xl font-bold mb-3">Decoded Transaction</h2>
-          <ReactJson src={decodedTransaction} theme="monokai" style={{
-            padding: "12px",
-            borderRadius: "8px",
-          }} />
+          <h2 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Decoded Transaction</h2>
+          {/* 亮色模式下显示 rjv-default 主题 */}
+          <div className="block dark:hidden max-w-full">
+            <ReactJson
+              src={decodedTransaction}
+              theme="rjv-default"
+              style={{
+                padding: "12px",
+                borderRadius: "8px",
+                backgroundColor: "#fff",
+                border: "1px solid #e5e7eb",
+                color: "#222",
+              }}
+            />
+          </div>
+          {/* 暗色模式下显示 monokai 主题 */}
+          <div className="hidden dark:block max-w-full">
+            <ReactJson
+              src={decodedTransaction}
+              theme="monokai"
+              style={{
+                padding: "12px",
+                borderRadius: "8px",
+                backgroundColor: "#1a1a1a",
+                border: "1px solid #333",
+                color: "#eee",
+              }}
+            />
+          </div>
         </div>
       )}
     </div>
