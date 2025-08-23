@@ -4,9 +4,9 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const routes = [
-  { name: '首页', path: '/' },
-  { name: 'EVM交易解码', path: '/evm/evm-tx-decoder' },
-  { name: 'Solana交易解码', path: '/sol/tx-decoder' },
+  { name: 'Home', path: '/' },
+  { name: 'EVM Transaction Decoder', path: '/evm/tx-decoder' },
+  { name: 'Solana Transaction Decoder', path: '/sol/tx-decoder' },
 ];
 
 export default function Sidebar() {
@@ -48,9 +48,9 @@ export default function Sidebar() {
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-yellow-300"
         >
           {isDark ? (
-            <span>🌙 夜间模式</span>
+            <span>🌙 Dark Mode</span>
           ) : (
-            <span>☀️ 日间模式</span>
+            <span>☀️ Light Mode</span>
           )}
         </button>
       </div>
