@@ -7,6 +7,7 @@ const routes = [
   { name: 'Home', path: '/' },
   { name: 'EVM Transaction Decoder', path: '/evm/tx-decoder' },
   { name: 'Solana Transaction Decoder', path: '/sol/tx-decoder' },
+  { name: 'Wallet Generator', path: '/wallet/wallet-generator' },
 ];
 
 export default function Sidebar() {
@@ -30,7 +31,7 @@ export default function Sidebar() {
   };
 
   return (
-  <nav className="flex flex-col w-56 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-colors duration-200">
+  <nav className="flex flex-col w-64 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-colors duration-200">
       <div className="flex-1 py-8 px-2">
         <ul className="space-y-4">
           {routes.map((route) => (
