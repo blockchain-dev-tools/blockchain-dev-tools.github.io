@@ -31,12 +31,12 @@ export default function Sidebar() {
 
   return (
   <nav className="flex flex-col w-56 min-h-screen bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-colors duration-200">
-      <div className="flex-1 py-8 px-4">
+      <div className="flex-1 py-8 px-2">
         <ul className="space-y-4">
           {routes.map((route) => (
             <li key={route.path}>
               <Link href={route.path}>
-                <span className={`block px-4 py-2 rounded-lg cursor-pointer transition-colors font-medium text-lg ${pathname === route.path ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>{route.name}</span>
+                <span className={`block px-2 py-2 rounded-lg cursor-pointer transition-colors font-medium text-sm ${pathname === route.path ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>{route.name}</span>
               </Link>
             </li>
           ))}
