@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import dynamic from "next/dynamic";
-import { parseTransaction, serializeTransaction, recoverAddress, keccak256, type ParseTransactionReturnType } from 'viem';
+import { parseTransaction, serializeTransaction, recoverAddress, keccak256, type ParseTransactionReturnType, type TransactionSerializable } from 'viem';
 import TextareaAutosize from 'react-textarea-autosize';
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
@@ -14,7 +14,15 @@ const isHex = (input: string): boolean => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function transactionToJson(transaction: ParseTransactionReturnType): Promise<any> {
-  const serializedTransaction = serializeTransaction(transaction);
+  // Create a mutable copy to fix type issues
+  const txCopy = { ...transaction } as any;
+
+  // Fix sidecars for EIP4844 transactions - viem parseTransaction can return false, but serializeTransaction expects undefined
+  if (txCopy.type === 'eip4844' && txCopy.sidecars === false) {
+    txCopy.sidecars = undefined;
+  }
+
+  const serializedTransaction = serializeTransaction(txCopy as TransactionSerializable);
   const transactionHash = keccak256(serializedTransaction);
 
   let fromAddress = "";
@@ -82,8 +90,13 @@ export default function EvmTransactionDecoder() {
       }
 
       const transaction = parseTransaction(transactionHex);
-      console.log('Transaction Data:', transaction);
-      const jsonData = await transactionToJson(transaction);
+      // Fix sidecars for EIP4844 transactions
+      const fixedTransaction = { ...transaction };
+      if (fixedTransaction.type === 'eip4844' && (fixedTransaction as any).sidecars === false) {
+        (fixedTransaction as any).sidecars = undefined;
+      }
+      console.log('Transaction Data:', fixedTransaction);
+      const jsonData = await transactionToJson(fixedTransaction as ParseTransactionReturnType);
 
       setParsedTransaction(jsonData);
     } catch (err) {
