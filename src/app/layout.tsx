@@ -18,11 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <div className="flex min-h-screen"
-          style={{ fontFamily: 'Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, "Courier New", monospace' }}>
+      <body className="antialiased bg-background text-foreground">
+        <div className="flex min-h-screen font-sans">
           <Sidebar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 w-full">{children}</main>
         </div>
       </body>
     </html>
