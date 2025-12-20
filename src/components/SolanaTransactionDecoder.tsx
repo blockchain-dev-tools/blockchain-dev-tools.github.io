@@ -4,10 +4,20 @@ import { useState } from "react";
 import { VersionedTransaction } from "@solana/web3.js";
 import bs58 from "bs58";
 import dynamic from "next/dynamic";
-import TextareaAutosize from "react-textarea-autosize";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { useTheme } from "next-themes";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
-
 
 const isBase58 = (str: string): boolean => {
   try {
@@ -86,15 +96,20 @@ function versionedTransactionToJson(
 }
 
 export default function SolanaTransactionDecoder() {
+  const { resolvedTheme } = useTheme();
   const [rawTransaction, setRawTransaction] = useState<string>("");
   const [decodedTransaction, setDecodedTransaction] =
     useState<DisplayTransaction | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // 不再检测暗色模式，全部用Tailwind dark:前缀控制
 
   const handleDecode = () => {
     try {
       setError(null);
+      setDecodedTransaction(null);
+
+      if (!rawTransaction.trim()) {
+        return;
+      }
 
       let transactionBuffer: Buffer;
       if (isBase58(rawTransaction)) {
@@ -103,14 +118,13 @@ export default function SolanaTransactionDecoder() {
         transactionBuffer = Buffer.from(rawTransaction, "base64");
       }
       if (transactionBuffer.length === 0) {
-        setError("Transaction buffer is empty");
+        throw new Error("Transaction buffer is empty");
       }
 
       const versionedTransaction =
         VersionedTransaction.deserialize(transactionBuffer);
       const json = versionedTransactionToJson(versionedTransaction);
       setDecodedTransaction(json);
-      setError(null);
     } catch (e: any) {
       setError(e.message);
       setDecodedTransaction(null);
@@ -118,61 +132,62 @@ export default function SolanaTransactionDecoder() {
   };
 
   return (
-    <div className="w-full mx-auto space-y-4">
-      <h1 className="text-2xl font-bold mb-4 text-[#7cae2f] dark:text-[#b5e853] dark:[text-shadow:0_0_2px_#b5e853,0_0_10px_#b5e853]">
-        Solana Transaction Decoder
-      </h1>
-      <div className="space-y-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-          Signed Raw Transaction (Base58 or Base64)
-          <TextareaAutosize
-            className="w-full mt-4 p-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded transition-colors"
-            placeholder="Enter Base58 or Base64 encoded transaction"
-            value={rawTransaction}
-            onChange={(e) => setRawTransaction(e.target.value)}
-            minRows={6}
-          />
-        </label>
-        <button
-          className="mt-4 bg-blue-700 dark:bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 dark:hover:bg-blue-950"
-          onClick={handleDecode}
-        >
-          Decode Transaction
-        </button>
+    <div className="w-full p-6 space-y-6">
+      <div className="">
+        <h1 className="text-3xl font-bold tracking-tight">Solana Transaction Decoder</h1>
+        <p className="text-muted-foreground">
+          Decode raw Solana transactions (Base58 or Base64) to view their details.
+        </p>
       </div>
-      {error && <div className="text-red-500 mt-2">{error}</div>}
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Transaction Input</CardTitle>
+          <CardDescription>
+            Paste your Base58 or Base64 encoded transaction string below.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid w-full gap-2">
+            <Label htmlFor="raw-tx">Signed Raw Transaction</Label>
+            <Textarea
+              id="raw-tx"
+              placeholder="Paste your transaction here..."
+              className="font-mono text-sm min-h-[120px]"
+              value={rawTransaction}
+              onChange={(e) => setRawTransaction(e.target.value.trim())}
+            />
+          </div>
+
+          {error && (
+            <div className="text-sm font-medium text-destructive p-2 bg-destructive/10 rounded-md">
+              {error}
+            </div>
+          )}
+        </CardContent>
+        <CardFooter>
+          <Button onClick={handleDecode} disabled={!rawTransaction}>Decode Transaction</Button>
+        </CardFooter>
+      </Card>
+
       {decodedTransaction && (
-        <div className="mt-6 max-w-full">
-          <h2 className="text-xl font-bold mb-3 text-gray-800 dark:text-gray-100">Decoded Transaction</h2>
-          {/* 亮色模式下显示 rjv-default 主题 */}
-          <div className="block dark:hidden max-w-full">
-            <ReactJson
-              src={decodedTransaction}
-              theme="rjv-default"
-              style={{
-                padding: "12px",
-                borderRadius: "8px",
-                backgroundColor: "#fff",
-                border: "1px solid #e5e7eb",
-                color: "#222",
-              }}
-            />
-          </div>
-          {/* 暗色模式下显示 monokai 主题 */}
-          <div className="hidden dark:block max-w-full">
-            <ReactJson
-              src={decodedTransaction}
-              theme="monokai"
-              style={{
-                padding: "12px",
-                borderRadius: "8px",
-                backgroundColor: "#1a1a1a",
-                border: "1px solid #333",
-                color: "#eee",
-              }}
-            />
-          </div>
-        </div>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Decoded Result</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border p-4 bg-muted/50 overflow-auto max-h-[600px]">
+              <ReactJson
+                src={decodedTransaction}
+                theme={resolvedTheme === 'dark' ? "monokai" : "rjv-default"}
+                enableClipboard={true}
+                displayDataTypes={false}
+                collapseStringsAfterLength={60}
+                style={{ backgroundColor: 'transparent' }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
