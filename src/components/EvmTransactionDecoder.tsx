@@ -3,7 +3,18 @@
 import { useState } from 'react';
 import dynamic from "next/dynamic";
 import { parseTransaction, serializeTransaction, recoverAddress, keccak256, type ParseTransactionReturnType, type TransactionSerializable } from 'viem';
-import TextareaAutosize from 'react-textarea-autosize';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { useTheme } from "next-themes";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
 
@@ -75,6 +86,7 @@ async function transactionToJson(transaction: ParseTransactionReturnType): Promi
 }
 
 export default function EvmTransactionDecoder() {
+  const { resolvedTheme } = useTheme();
   const [rawTransaction, setRawTransaction] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [parsedTransaction, setParsedTransaction] = useState<any | null>(null);
@@ -83,6 +95,11 @@ export default function EvmTransactionDecoder() {
   const handleDecode = async () => {
     try {
       setError(null);
+      setParsedTransaction(null);
+
+      if (!rawTransaction.trim()) {
+        return;
+      }
 
       let transactionHex: `0x${string}`;
 
@@ -94,67 +111,80 @@ export default function EvmTransactionDecoder() {
       }
 
       const transaction = parseTransaction(transactionHex);
+
       // Fix sidecars for EIP4844 transactions
       const fixedTransaction = { ...transaction };
       if (fixedTransaction.type === 'eip4844' && (fixedTransaction as any).sidecars === false) {
         (fixedTransaction as any).sidecars = undefined;
       }
+
       console.log('Transaction Data:', fixedTransaction);
       const jsonData = await transactionToJson(fixedTransaction as ParseTransactionReturnType);
       console.log(jsonData)
       setParsedTransaction(jsonData);
     } catch (err) {
       console.error(err);
-      setError('Failed to decode transaction. Please check if the input is a valid EVM transaction.');
+      setError('Failed to decode transaction. Please check if the input is a valid signed EVM transaction.');
     }
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-[#b5e853]">EVM Transaction Decoder</h1>
-
-      <div className="space-y-4">
-        <label className="block">
-          <span className="text-gray-700 dark:text-gray-200">Signed Raw Transaction (hex)</span>
-          <TextareaAutosize
-            minRows={6}
-            value={rawTransaction}
-            onChange={(e) => setRawTransaction(e.target.value)}
-            className="mt-1 p-4 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-800 dark:border-gray-700 h-32"
-            placeholder="Paste your hex encoded signed transaction here (with or without 0x prefix)"
-          />
-
-        </label>
-
-        <button
-          onClick={handleDecode}
-          className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-        >
-          Decode Transaction
-        </button>
+    <div className="w-full p-6 ">
+      <div className="">
+        <h1 className="text-3xl font-bold tracking-tight">EVM Transaction Decoder</h1>
+        <p className="text-muted-foreground">
+          Decode raw signed EVM transactions to view their details.
+        </p>
       </div>
 
-      {error && (
-        <div className="p-4 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md">
-          {error}
-        </div>
-      )}
-
-      {parsedTransaction && (
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Decoded Transaction</h2>
-          <div className="rounded-md overflow-auto max-h-96">
-            <ReactJson
-              src={parsedTransaction}
-              theme="monokai"
-              enableClipboard={true}
-              collapseStringsAfterLength={200}
-              style={{
-                padding: '16px',
-              }}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle>Transaction Input</CardTitle>
+          <CardDescription>
+            Paste your hex encoded signed transaction string below.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid w-full gap-2">
+            <Label htmlFor="raw-tx">Raw Transaction Hex</Label>
+            <Textarea
+              id="raw-tx"
+              placeholder="0x02f873018305..."
+              className="font-mono text-sm min-h-[120px]"
+              value={rawTransaction}
+              onChange={(e) => setRawTransaction(e.target.value.trim())}
             />
           </div>
-        </div>
+
+          {error && (
+            <div className="text-sm font-medium text-destructive p-2 bg-destructive/10 rounded-md">
+              {error}
+            </div>
+          )}
+        </CardContent>
+        <CardFooter>
+          <Button onClick={handleDecode} disabled={!rawTransaction}>Decode Transaction</Button>
+        </CardFooter>
+      </Card>
+
+      {parsedTransaction && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Decoded Result</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border p-4 bg-muted/50 overflow-auto max-h-[600px]">
+              <ReactJson
+                src={parsedTransaction}
+                theme={resolvedTheme === 'dark' ? "monokai" : "rjv-default"}
+                enableClipboard={true}
+                displayDataTypes={false}
+                collapseStringsAfterLength={60}
+                style={{ backgroundColor: 'transparent' }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
