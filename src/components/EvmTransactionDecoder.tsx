@@ -49,9 +49,9 @@ async function transactionToJson(transaction: ParseTransactionReturnType): Promi
     }));
   }
 
-  return {
+  const res = {
     hash: transactionHash,
-    type: transaction.type,
+    type: transaction.type?.toString(),
     to: transaction.to,
     from: fromAddress,
     value: transaction.value?.toString(),
@@ -60,14 +60,18 @@ async function transactionToJson(transaction: ParseTransactionReturnType): Promi
     gasPrice: transaction.gasPrice?.toString(),
     maxFeePerGas: transaction.maxFeePerGas?.toString(),
     maxPriorityFeePerGas: transaction.maxPriorityFeePerGas?.toString(),
-    nonce: transaction.nonce,
-    chainId: transaction.chainId,
+    nonce: transaction.nonce?.toString(),
+    chainId: transaction.chainId?.toString(),
     accessList: accessList,
     r: transaction.r,
     s: transaction.s,
     v: transaction.v,
     yParity: transaction.yParity,
   };
+  const jsonString = JSON.stringify(res, (key, value) =>
+    typeof value === 'bigint' ? value.toString() : value
+  );
+  return JSON.parse(jsonString);
 }
 
 export default function EvmTransactionDecoder() {
@@ -97,7 +101,7 @@ export default function EvmTransactionDecoder() {
       }
       console.log('Transaction Data:', fixedTransaction);
       const jsonData = await transactionToJson(fixedTransaction as ParseTransactionReturnType);
-
+      console.log(jsonData)
       setParsedTransaction(jsonData);
     } catch (err) {
       console.error(err);
