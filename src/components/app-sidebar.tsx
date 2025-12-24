@@ -146,6 +146,10 @@ const data = {
             title: "Transaction Decoder",
             url: "/evm/tx-decoder",
           },
+          {
+            title: "ABI Decoder",
+            url: "/evm/abi-decoder",
+          },
         ],
       },
     ]
