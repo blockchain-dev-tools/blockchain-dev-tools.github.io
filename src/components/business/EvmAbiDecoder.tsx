@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { formatJsonResult } from "@/lib/common"
 import { useTheme } from "next-themes";
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
@@ -69,26 +70,7 @@ export default function EvmAbiDecoder() {
         });
 
         // Convert bigints to strings for JSON display
-        const jsonResult = {
-          functionName: result.functionName,
-          args: result.args?.map((arg: any) => {
-            if (typeof arg === 'bigint') {
-              return arg.toString();
-            }
-            if (Array.isArray(arg)) {
-              return arg.map(item => typeof item === 'bigint' ? item.toString() : item);
-            }
-            if (typeof arg === 'object' && arg !== null) {
-              return Object.fromEntries(
-                Object.entries(arg).map(([k, v]) => [
-                  k,
-                  typeof v === 'bigint' ? v.toString() : v
-                ])
-              );
-            }
-            return arg;
-          }),
-        };
+        const jsonResult = formatJsonResult(result);
 
         setDecodedData(jsonResult);
       } else {
@@ -102,23 +84,7 @@ export default function EvmAbiDecoder() {
         const result = decodeAbiParameters(params, dataHex);
 
         // Convert bigints to strings for JSON display
-        const jsonResult = result.map((arg: any) => {
-          if (typeof arg === 'bigint') {
-            return arg.toString();
-          }
-          if (Array.isArray(arg)) {
-            return arg.map(item => typeof item === 'bigint' ? item.toString() : item);
-          }
-          if (typeof arg === 'object' && arg !== null) {
-            return Object.fromEntries(
-              Object.entries(arg).map(([k, v]) => [
-                k,
-                typeof v === 'bigint' ? v.toString() : v
-              ])
-            );
-          }
-          return arg;
-        });
+        const jsonResult = formatJsonResult(result);
 
         setDecodedData(jsonResult);
       }
