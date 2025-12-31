@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 };
 
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/layout/app-sidebar"
 
-import { ThemeProvider } from "@/components/theme-provider"
-import { SiteHeader } from "@/components/site-header"
+import { ThemeProvider } from "@/components/layout/theme-provider"
+import { SiteHeader } from "@/components/layout/site-header"
 
 export default function RootLayout({
   children,

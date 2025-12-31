@@ -1,6 +1,6 @@
 'use client';
 
-import EvmTransactionDecoder from '@/components/EvmTransactionDecoder';
+import EvmTransactionDecoder from '@/components/features/evm/EvmTransactionDecoder';
 
 
 export default function Page() {

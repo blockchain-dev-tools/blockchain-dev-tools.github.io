@@ -1,6 +1,6 @@
 'use client';
 
-import EvmSignatureRecover from '@/components/EvmSignatureRecover';
+import EvmSignatureRecover from '@/components/features/evm/EvmSignatureRecover';
 
 
 export default function Page() {

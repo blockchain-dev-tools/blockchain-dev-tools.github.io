@@ -1,6 +1,6 @@
 'use client';
 
-import EvmAbiDecoder from '@/components/business/EvmAbiDecoder';
+import EvmAbiDecoder from '@/components/features/evm/EvmAbiDecoder';
 
 
 export default function Page() {

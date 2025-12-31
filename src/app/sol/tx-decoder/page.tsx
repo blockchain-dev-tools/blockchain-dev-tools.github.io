@@ -1,6 +1,6 @@
 'use client';
 
-import SolanaTransactionDecoder from '@/components/SolanaTransactionDecoder';
+import SolanaTransactionDecoder from '@/components/features/sol/SolanaTransactionDecoder';
 
 
 export default function Page() {
