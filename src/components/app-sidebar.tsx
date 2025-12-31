@@ -2,16 +2,19 @@
 
 import * as React from "react"
 import {
+  ArrowRightLeft,
   AudioWaveform,
   BookOpen,
   Bot,
   Command,
+  FileCode,
   Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
   SquareTerminal,
+  Wallet,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -57,7 +60,7 @@ const data = {
       {
         title: "Wallet",
         url: "#",
-        icon: SquareTerminal,
+        icon: Wallet,
         isActive: true,
         items: [
           {
@@ -139,13 +142,21 @@ const data = {
       {
         title: "Transaction",
         url: "#",
-        icon: SquareTerminal,
+        icon: ArrowRightLeft,
         isActive: true,
         items: [
           {
             title: "Transaction Decoder",
             url: "/evm/tx-decoder",
           },
+        ],
+      },
+      {
+        title: "Contract",
+        url: "#",
+        icon: FileCode,
+        isActive: true,
+        items: [
           {
             title: "ABI Decoder",
             url: "/evm/abi-decoder",
@@ -160,7 +171,7 @@ const data = {
       {
         title: "Transaction",
         url: "#",
-        icon: SquareTerminal,
+        icon: ArrowRightLeft,
         isActive: true,
         items: [
           {
