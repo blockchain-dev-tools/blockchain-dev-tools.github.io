@@ -174,6 +174,10 @@ const data = {
             title: "Signature Recover",
             url: "/evm/recover",
           },
+          {
+            title: "Private Key to Address",
+            url: "/evm/privatekey-to-address",
+          },
         ],
       },
     ]
