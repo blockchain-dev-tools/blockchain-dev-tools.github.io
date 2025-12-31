@@ -10,6 +10,7 @@ import {
   FileCode,
   Frame,
   GalleryVerticalEnd,
+  Key,
   Map,
   PieChart,
   Settings2,
@@ -160,6 +161,18 @@ const data = {
           {
             title: "ABI Decoder",
             url: "/evm/abi-decoder",
+          },
+        ],
+      },
+      {
+        title: "Crypto",
+        url: "#",
+        icon: Key,
+        isActive: true,
+        items: [
+          {
+            title: "Signature Recover",
+            url: "/evm/recover",
           },
         ],
       },
