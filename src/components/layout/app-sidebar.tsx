@@ -141,6 +141,18 @@ const data = {
     name: "EVM",
     items: [
       {
+        title: "RPC",
+        url: "#",
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "RPC Caller",
+            url: "/evm/rpc-caller",
+          },
+        ],
+      },
+      {
         title: "Transaction",
         url: "#",
         icon: ArrowRightLeft,
@@ -185,6 +197,18 @@ const data = {
   navSol: {
     name: "SOL",
     items: [
+            {
+        title: "RPC",
+        url: "#",
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "RPC Caller",
+            url: "/sol/rpc-caller",
+          },
+        ],
+      },
       {
         title: "Transaction",
         url: "#",
@@ -194,6 +218,40 @@ const data = {
           {
             title: "Transaction Decoder",
             url: "/sol/tx-decoder",
+          },
+        ],
+      },
+    ]
+  },
+    navTron: {
+    name: "TRON",
+    items: [
+      {
+        title: "RPC",
+        url: "#",
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "RPC Caller",
+            url: "/tron/rpc-caller",
+          },
+        ],
+      },
+    ]
+  },
+  navSui: {
+    name: "SUI",
+    items: [
+      {
+        title: "RPC",
+        url: "#",
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "RPC Caller",
+            url: "/sui/rpc-caller",
           },
         ],
       },
@@ -228,6 +286,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavGroup groupName={data.navMain.name} items={data.navMain.items} />
         <NavGroup groupName={data.navEvm.name} items={data.navEvm.items} />
         <NavGroup groupName={data.navSol.name} items={data.navSol.items} />
+        <NavGroup groupName={data.navTron.name} items={data.navTron.items} />
+        <NavGroup groupName={data.navSui.name} items={data.navSui.items} />
         {/* <NavMain items={data.navMain} /> */}
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>

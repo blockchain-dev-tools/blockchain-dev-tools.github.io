@@ -22,6 +22,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar"
 
 import { ThemeProvider } from "@/components/layout/theme-provider"
 import { SiteHeader } from "@/components/layout/site-header"
+import { Toaster } from '@/components/layout/sonner-toaster';
 
 export default function RootLayout({
   children,
@@ -46,6 +47,7 @@ export default function RootLayout({
               {children}
             </main>
           </SidebarProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
